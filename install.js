@@ -29,12 +29,10 @@ exports.register = function(commander,quick){
                     });
                 }
             }).then(function(){
-                var filepath =  path.resolve(settings.root, 'qconf.js');
-                var opts;
+                var filepath =  path.resolve(settings.root, quick.config.confFileName);
                 if (exists(filepath)) {
-                    opts = require(filepath);
-                    opts = quick.util.merge(quick.config,opts || {});
-                    require('./lib/build')(quick,opts).start();
+                    require(filepath)(quick);
+                    require('./lib/build')(quick).start();
                 }else{
                     quick.log.error('请检查qconf配置文件是否存在！');
                 }

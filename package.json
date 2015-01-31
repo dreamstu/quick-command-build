@@ -1,7 +1,7 @@
 {
     "name" : "quick-command-build",
     "description" : "quick build command.",
-    "version" : "0.1.9",
+    "version" : "0.1.22",
     "author" : "QuickJs Team <q@quickjs.org>",
     "homepage" : "http://q.quickjs.org/",
     "keywords": [ "q","quick","build" ],
@@ -17,6 +17,9 @@
         "test" : "mocha test/ut --recursive"
     },
     "dependencies" : {
+        "shelljs":"~0.3.0",
+        "prompt":"^0.2.6",
+        "moment":"^2.9.0"
     },
     "devDependencies": {}
 }
