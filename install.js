@@ -12,6 +12,7 @@ exports.register = function(commander,quick){
 
     commander
         .option('-r, --root <path>', 'set build root')
+        .option('-f, --force', 'forced to skip warning')
         .action(function(){
             var Promise = quick.util.Promise;
 
@@ -19,7 +20,8 @@ exports.register = function(commander,quick){
             var options = args.pop();
 
             var settings = {
-                root: options.root || ''
+                root: options.root || '',
+                force:(options.force)?'--force':''
             };
 
             Promise.try(function() {
@@ -32,6 +34,9 @@ exports.register = function(commander,quick){
                 var filepath =  path.resolve(settings.root, quick.config.confFileName);
                 if (exists(filepath)) {
                     require(filepath)(quick);
+                    if(settings.force!=''){
+                        quick.config.build.force=settings.force
+                    }
                     require('./lib/build')(quick).start();
                 }else{
                     quick.log.error('请检查qconf配置文件是否存在！');
