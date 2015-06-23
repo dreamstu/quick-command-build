@@ -1,7 +1,7 @@
 {
     "name" : "quick-command-build",
     "description" : "quick build command.",
-    "version" : "0.1.26",
+    "version" : "0.1.27",
     "author" : "QuickJs Team <q@quickjs.org>",
     "homepage" : "http://q.quickjs.org/",
     "keywords": [ "q","quick","build" ],
