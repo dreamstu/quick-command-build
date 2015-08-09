@@ -6,46 +6,38 @@ exports.desc = 'build components';
 
 var fs = require('fs');
 var path = require('path');
-var exists = fs.existsSync;
 
 exports.register = function(commander,quick){
 
     commander
         .option('-r, --root <path>', 'set build root')
-        .option('-f, --force', 'forced to skip warning')
-        .action(function(){
-            var Promise = quick.util.Promise;
+        .option('-t, --temp <path>', 'set up temporary folders for build')
+        .option('-i, --inf <path>', 'set build in folder')
+        .option('-o, --outf <path>', 'set build out folder')
+        .option('-q, --queue <string>', 'set build queue,Use comma(,) separated or all')
+        .option('-m, --moreLog <boolean>', 'see more logs')
+        .option('-u, --uglify <boolean>', 'uglify js')
+        .option('-p, --id <string>', 'set module prefix')
+        .option('-c, --clear <boolean>', 'clear temporary folders when building complete')
+        .option('-d, --delay <number>', 'set delay (ms)')
 
+        .action(function(){
             var args = [].slice.call(arguments);
             var options = args.pop();
-
+            options.root = path.resolve(process.cwd(),options.root || '..');
             var settings = {
-                root: options.root || '',
-                force:(options.force)?'--force':''
+                root: options.root,
+                temp: options.temp || '../tmp',
+                inf: path.resolve(process.cwd(),options.inf || options.root),
+                outf: path.resolve(process.cwd(),options.outf || '../../'),
+                queue: options.queue?(options.queue=='all'?'all':(options.queue+"").split(',')):'',
+                moreLog: options.moreLog || false,
+                uglify: options.uglify || true,
+                id: options.id || 'gallery',
+                clear: options.clear,
+                delay: options.delay
             };
 
-            Promise.try(function() {
-                if (!settings.root) {
-                    return quick.util.findConf(function(dir){
-                        settings.root = dir || process.cwd();
-                    });
-                }
-            }).then(function(){
-                var filepath =  path.resolve(settings.root, quick.config.confFileName);
-                if (exists(filepath)) {
-                    require(filepath)(quick);
-                    if(settings.force!=''){
-                        quick.config.build.force=settings.force
-                    }
-                    require('./lib/build')(quick).start();
-                }else{
-                    quick.log.error('请检查qconf配置文件是否存在！');
-                }
-            }).catch(function(e) {
-                if (/Not\s+Found/i.test(e.message)) {
-                    quick.log.warn('`quick install` now is for installing commponents, you may use `\x1b[31mlights install\x1b[0m` instead.');
-                }
-                quick.log.error('\x1b[31m%s\x1b[0m', e.message);
-            });
+            require('./lib/build')(settings).start();
         });
 };
